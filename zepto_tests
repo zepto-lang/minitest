@@ -1,0 +1,6 @@
+(if (/= (length zepto:args) 1)
+  (write "usage: zepto zepto_test <test-file>")
+  (begin
+    (define minitest (import "minitest"))
+    (load (car zepto:args))
+    ((minitest "results"))))
