@@ -1,6 +1,6 @@
 # minitest
 
-A minimal test library for zepto. It is in early alphae
+A minimal test library for zepto. It is in early alpha.
 
 # Usage
 
@@ -20,8 +20,8 @@ The following endpoints are exposed:
 ```
 
 A minimal script named `zepto_tests` is also included.
-Usage:
-```bash
+Usage looks somewhat like this:
+```
 $ zepto zepto_tests test.zp # this will run the file test.zp and print results
 ```
 
