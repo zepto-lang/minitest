@@ -17,5 +17,3 @@
 ((minitest "assert-true") #f "expected fail for assert-true")
 ((minitest "assert-not-equal") 1 1 "expected fail for assert-not-equal")
 ((minitest "assert-equal") 1 2 "expected fail for assert-equal")
-
-((minitest "results"))

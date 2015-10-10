@@ -25,8 +25,8 @@
   (unit-test-handler (lambda (expected actual descr . eq) 
     (let ((test (get-from eq 0 (lambda (x y) (eqv? x y)))))
       (if (not (test expected actual))
-        (begin (_c :red) (map display (reverse (list "Test \"" descr "\" failed;"))) (_c :reset)
-               (map display (reverse (list " expected value: \"" expected "\", actual value: \"" actual "\"\n")))
+        (begin (_c :red) (map display (reverse (list "Test \"" descr "\" failed\n\t"))) (_c :reset)
+               (map display (reverse (list "Expected value: \"" expected "\", actual value: \"" actual "\"\n")))
                (if _exit (begin (_c :red) (write "Exiting on first fail") (_c :reset) (exit 1)))
                (set! fail-count (+ fail-count 1)))
         (begin (_c :green) (write (++ "Test \"" descr "\" passed")) (_c :reset)
@@ -59,7 +59,10 @@
 
   (results (lambda () 
     (begin
-      (display "Test complete; ") (_c :green) (map display (reverse (list "Passed: " pass-count)))
+      (write "Results: ")
+      (_c :green) (display (++ "|" (replicate pass-count "=")))
+      (_c :red) (write (++ (replicate fail-count "=") "|"))
+      (_c :green) (map display (reverse (list "Passed: " pass-count)))
       (_c :red) (map display (reverse (list " Failed: " fail-count "\n"))) (_c :reset)
       fail-count)))
   (all-passed (lambda () (= fail-count 0))))
