@@ -1,9 +1,22 @@
 (load "minitest.zp")
-(if (/= (length zepto:args) 1)
-  (write "usage: zepto zepto_test <test-file>")
-  (begin
-    (define minitest (import "minitest"))
-    ((minitest "colorize") #t)
-    (load (car zepto:args))
-    (write "\n---------\n")
-    ((minitest "results"))))
+(load "argparse/argparse.zp")
+
+(define handled ((import "argparse:handle-args") "runs zepto test files"
+                                            (list
+                                                 (make-hash ["name" "file"]
+                                                            ["short" "f"]
+                                                            ["usage" "file to run"]
+                                                            ["type" :string])
+                                                 (make-hash ["name" "verbose"]
+                                                            ["short" "v"]
+                                                            ["usage" "sets verbosity"]
+                                                            ["type" :boolean]))))
+(if (falsy? handled) (exit 1))
+
+(begin
+  (define minitest (import "minitest"))
+  ((minitest "colorize") #t)
+  ((minitest "verbose") (handled "verbose"))
+  (load (handled "file"))
+  (write "\n---------\n")
+  ((minitest "results")))

@@ -11,6 +11,7 @@
   (list :all-passed all-passed)
   (list :exit-first-fail exit-first-fail)
   (list :colorize colorize)
+  (list :verbose verbose)
   (list :results results))
 
   (pass-count 0)
@@ -18,18 +19,24 @@
 
   (_exit #f)
   (_colorize #f)
+  (_verbose #f)
   (_c (lambda (x) (if _colorize (color x))))
   (exit-first-fail (lambda (x) (set! _exit x)))
   (colorize (lambda (x) (set! _colorize x)))
+  (verbose (lambda (x) (set! _verbose x)))
 
   (unit-test-handler (lambda (expected actual descr . eq) 
     (let ((test (get-from eq 0 (lambda (x y) (eqv? x y)))))
       (if (not (test expected actual))
-        (begin (_c :red) (map display (reverse (list "Test \"" descr "\" failed\n\t"))) (_c :reset)
-               (map display (reverse (list "Expected value: \"" expected "\", actual value: \"" actual "\"\n")))
+        (begin (if _verbose 
+               (begin (_c :red) (map display (reverse (list "Test \"" descr "\" failed\n\t"))) (_c :reset)
+               (map display (reverse (list "Expected value: \"" expected "\", actual value: \"" actual "\"\n"))))
+                (begin (_c :red) (display "F") (_c :reset)))
                (if _exit (begin (_c :red) (write "Exiting on first fail") (_c :reset) (exit 1)))
                (set! fail-count (+ fail-count 1)))
-        (begin (_c :green) (write (++ "Test \"" descr "\" passed")) (_c :reset)
+        (begin (if _verbose
+                (begin (_c :green) (write (++ "Test \"" descr "\" passed")) (_c :reset))
+                (begin (_c :green) (display "P") (_c :reset)))
         (set! pass-count (+ pass-count 1)))))))
 
   (assert-equal (lambda (x y . descr)
@@ -60,9 +67,10 @@
   (results (lambda () 
     (begin
       (write "Results: ")
-      (_c :green) (display (++ "|" (replicate pass-count "=")))
-      (_c :red) (write (++ (replicate fail-count "=") "|"))
-      (_c :green) (map display (reverse (list "Passed: " pass-count)))
+      (if _verbose (begin
+        (_c :green) (display (++ "\t|" (replicate pass-count "=")))
+        (_c :red) (write (++ (replicate fail-count "=") "|"))))
+      (_c :green) (map display (reverse (list "\tPassed: " pass-count)))
       (_c :red) (map display (reverse (list " Failed: " fail-count "\n"))) (_c :reset)
       fail-count)))
   (all-passed (lambda () (= fail-count 0))))
