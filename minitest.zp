@@ -10,21 +10,26 @@
   (list :assert-not-nil assert-not-nil)
   (list :all-passed all-passed)
   (list :exit-first-fail exit-first-fail)
+  (list :colorize colorize)
   (list :results results))
 
   (pass-count 0)
   (fail-count 0)
 
   (_exit #f)
+  (_colorize #f)
+  (_c (lambda (x) (if _colorize (color x))))
   (exit-first-fail (lambda (x) (set! _exit x)))
+  (colorize (lambda (x) (set! _colorize x)))
 
   (unit-test-handler (lambda (expected actual descr . eq) 
     (let ((test (get-from eq 0 (lambda (x y) (eqv? x y)))))
       (if (not (test expected actual))
-        (begin (map display (reverse (list "Test \"" descr "\" failed; expected value: \"" expected "\", actual value: \"" actual "\"\n")))
-               (if _exit (begin (write "Exiting on first fail") (exit 1)))
+        (begin (_c :red) (map display (reverse (list "Test \"" descr "\" failed;"))) (_c :reset)
+               (map display (reverse (list " expected value: \"" expected "\", actual value: \"" actual "\"\n")))
+               (if _exit (begin (_c :red) (write "Exiting on first fail") (_c :reset) (exit 1)))
                (set! fail-count (+ fail-count 1)))
-        (begin (write (++ "Test \"" descr "\" passed"))
+        (begin (_c :green) (write (++ "Test \"" descr "\" passed")) (_c :reset)
         (set! pass-count (+ pass-count 1)))))))
 
   (assert-equal (lambda (x y . descr)
@@ -54,6 +59,7 @@
 
   (results (lambda () 
     (begin
-      (map display  (reverse (list "Test complete; " "Passed: " pass-count " Failed: " fail-count "\n")))
+      (display "Test complete; ") (_c :green) (map display (reverse (list "Passed: " pass-count)))
+      (_c :red) (map display (reverse (list " Failed: " fail-count "\n"))) (_c :reset)
       fail-count)))
   (all-passed (lambda () (= fail-count 0))))

@@ -17,6 +17,7 @@ The following endpoints are exposed:
 (all-passed) ; returns a boolean signifying whether all tests have passed
 (exit-first-fail #t) ; if this is set to true, the program exits once a test fails
 (results) ; prints test results
+(colorize) ; colorizes test output
 ```
 
 A minimal script named `zepto_tests` is also included.

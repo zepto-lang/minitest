@@ -1,5 +1,6 @@
 (load "minitest.zp")
 (define minitest (import "minitest"))
+((minitest "colorize") #t)
 ((minitest "assert-equal") #t #t)
 ((minitest "assert-not-equal") #t #f)
 ((minitest "assert-true") #t)
