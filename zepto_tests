@@ -1,14 +1,12 @@
-(load "minitest.zp")
+(load "minitest/minitest.zp")
 (load "argparse/argparse.zp")
 
 (define handled ((import "argparse:handle-args") "runs zepto test files"
                                             (list
                                                  (make-hash ["name" "file"]
-                                                            ["short" "f"]
                                                             ["usage" "file to run"]
                                                             ["type" :string])
                                                  (make-hash ["name" "verbose"]
-                                                            ["short" "v"]
                                                             ["usage" "sets verbosity"]
                                                             ["type" :boolean]))))
 (if (falsy? handled) (exit 1))
