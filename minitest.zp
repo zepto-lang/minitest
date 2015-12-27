@@ -71,11 +71,11 @@
       (write "Results: ")
       (if _verbose (begin
         (_c :green) 
-        (display (++ "\t|" (replicate pass-count "=")))
+        (if (> pass-count 0) (display (++ "\t|" (replicate pass-count "="))))
         (if (eq? fail-count 0) (write "|"))
         (_c :red)
         (if (eq? pass-count 0) (display "|"))
-        (write (++ (replicate fail-count "=") "|"))))
+        (if (> fail-count 0) (write (++ (replicate fail-count "=") "|")))))
       (_c :green) (map display (reverse (list "\tPassed: " pass-count)))
       (_c :red) (map display (reverse (list " Failed: " fail-count "\n"))) (_c :reset)
       fail-count)))
