@@ -14,8 +14,6 @@
   (list :verbose verbose)
   (list :results results))
 
-  (loads '())
-
   (pass-count 0)
   (fail-count 0)
 
