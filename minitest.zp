@@ -21,9 +21,33 @@
   (_colorize #f)
   (_verbose #f)
   (_c (lambda (x) (if _colorize (color x))))
-  (exit-first-fail (lambda (x) (set! _exit x)))
-  (colorize (lambda (x) (set! _colorize x)))
-  (verbose (lambda (x) (set! _verbose x)))
+  (exit-first-fail (lambda (x)
+    "sets whether the tests should terminate after the first failing test.
+     (defaults: false)
+
+     params:
+      - x: the truth value
+     complexity: O(1)
+     returns: <par>x</par>"
+    (set! _exit x)))
+  (colorize (lambda (x)
+    "sets whether the output should be colorized.
+     (defaults: false)
+
+     params:
+      - x: the truth value
+     complexity: O(1)
+     returns: <par>x</par>"
+    (set! _colorize x)))
+  (verbose (lambda (x)
+    "sets whether the output should be verbose.
+     (defaults: false)
+
+     params:
+      - x: the truth value
+     complexity: O(1)
+     returns: <par>x</par>"
+    (set! _verbose x)))
 
   (unit-test-handler (lambda (expected actual descr what . eq) 
     (let ((test (get-from eq 0 (lambda (x y) (eqv? x y)))))
@@ -40,31 +64,93 @@
         (set! pass-count (+ pass-count 1)))))))
 
   (assert-equal (lambda (x y . descr)
+    "assert that <par>x</par> and <par>y</par> are equal.
+
+     params:
+      - x: the expected value
+      - y: the actual value
+      - descr: optional argument that describes the test
+     complexity: O(1)
+     returns: the number of passed tests"
     (let ((descr (get-from descr 0 "assert-equal")))
       (unit-test-handler x y descr "value"))))
   (assert-not-equal (lambda (x y . descr)
+    "assert that <par>x</par> and <par>y</par> are not equal.
+
+     params:
+      - x: the expected value
+      - y: the actual value
+      - descr: optional argument that describes the test
+     complexity: O(1)
+     returns: the number of passed tests"
     (let ((descr (get-from descr 0 "assert-not-equal")))
       (unit-test-handler x y descr "not" (lambda (x y) (not (eqv? x y)))))))
   (assert-true (lambda (x . descr)
+    "assert that <par>x</par> is true.
+
+     params:
+      - x: the given value
+      - descr: optional argument that describes the test
+     complexity: O(1)
+     returns: the number of passed tests"
     (let ((descr (get-from descr 0 "assert-true")))
       (assert-equal #t x descr))))
   (assert-false (lambda (x . descr)
+    "assert that <par>x</par> is false.
+
+     params:
+      - x: the given value
+      - descr: optional argument that describes the test
+     complexity: O(1)
+     returns: the number of passed tests"
     (let ((descr (get-from descr 0 "assert-false")))
       (assert-equal #f x descr))))
   (assert-truthy (lambda (x . descr)
+    "assert that <par>x</par> is truthy.
+
+     params:
+      - x: the given value
+      - descr: optional argument that describes the test
+     complexity: O(1)
+     returns: the number of passed tests"
     (let ((descr (get-from descr 0 "assert-truthy")))
       (unit-test-handler x (truthy? x) descr "to be truthy" (lambda (x y) (truthy? x))))))
   (assert-falsy (lambda (x . descr)
+    "assert that <par>x</par> is falsy.
+
+     params:
+      - x: the given value
+      - descr: optional argument that describes the test
+     complexity: O(1)
+     returns: the number of passed tests"
     (let ((descr (get-from descr 0 "assert-falsy")))
     (unit-test-handler x (falsy? x) descr "to be falsy" (lambda (x y) (falsy? x))))))
   (assert-nil (lambda (x . descr)
+    "assert that <par>x</par> is nil.
+
+     params:
+      - x: the given value
+      - descr: optional argument that described the test
+     complexity: O(1)
+     returns: the number of passed tests"
     (let ((descr (get-from descr 0 "assert-nil")))
       (assert-equal (nil) x descr))))
   (assert-not-nil (lambda (x . descr)
+    "assert that <par>x</par> is not nil.
+
+     params:
+      - x: the given value
+      - descr: optional argument that described the test
+     complexity: O(1)
+     returns: the number of passed tests"
     (let ((descr (get-from descr 0 "assert-not-nil")))
       (assert-not-equal (nil) x descr))))
 
-  (results (lambda () 
+  (results (lambda ()
+    "prints the test results.
+
+     complexity: O(1)
+     returns: the number of failed tests"
     (begin
       (write "Results: ")
       (if _verbose (begin
@@ -77,4 +163,9 @@
       (_c :green) (map display (reverse (list "\tPassed: " pass-count)))
       (_c :red) (map display (reverse (list " Failed: " fail-count "\n"))) (_c :reset)
       fail-count)))
-  (all-passed (lambda () (= fail-count 0))))
+  (all-passed (lambda ()
+    "returns whether the tests all passed.
+
+     complexity: O(1)
+     returns: a boolean"
+    (= fail-count 0))))
